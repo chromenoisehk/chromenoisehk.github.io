@@ -3,17 +3,15 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-	<?php
-	$mode = 'upload';
-	require_once('header.php');
-	?>
-	<title><?php echo $title; ?></title>
+	<meta property="og:title" content="YOTTA - Fully-encrypted censorship-free file sharing service">
+	<meta property="og:description" content="Upload new file on YOTTA">
+	<title>YOTTA :: 안전한 파일 공유 서비스</title>
 	<link rel="stylesheet" type="text/css" href="site.min.css">
 	<link rel="stylesheet" type="text/css" href="jquery-ui.min.css">
 	<script src="jquery.js"></script>
 	<script src="jquery-ui.min.js"></script>
 	<script src="bootstrap.min.js"></script>
-	<script src="./cryptojs/rollups/sha256.js"></script>
+	<script src="cryptojs\rollups\sha256.js"></script>
 	<script src="jquery.zclip.min.js"></script>
 	<style type="text/css">
 		@font-face {
@@ -101,7 +99,7 @@
 		$(document).ready(function() {
 			$("#datepicker").datepicker();
 			if (window.location.pathname.indexOf('nofile') >= 0) {
-				alert('<?php echo $str['err_doesntexist']; ?>');
+				alert('존재하지 않는 파일입니다.');
 			}
 			var date = new Date;
 			var date = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -110,14 +108,12 @@
 
 		var selectFile = function(e) {
 			file = e.target.files[0];
-			<?php if (!isset($_GET['secret'])) { ?>
-			if (file.size > <?php echo $sizelimit; ?>) {
-				alert('<?php echo $str['err_sizelimit']; ?>');
+						if (file.size > 1073741824) {
+				alert('선택한 파일이 업로드 제한 용량(1GB)을 초과합니다.');
 				file = null;
 				return;
 			}
-			<?php } ?>
-
+			
 			var size_h;
 			if (file.size > Math.pow(2,30)) {
 				size_h = Math.round(file.size / Math.pow(2,30) * 100) / 100 + 'GB';
@@ -128,35 +124,35 @@
 			} else {
 				size_h = file.size + 'B';
 			}
-			$("#btn_select").html(file.name + ' (' + size_h + ') <?php echo $str['selected']; ?>');
+			$("#btn_select").html(file.name + ' (' + size_h + ') 선택됨');
 		};
 
 		var upload = function() {
 			var password = $("#password").val();
 			var password_delete = $("#password_delete").val();
 			if (window.location.protocol !== "https:") {
-				alert('<?php echo $str['err_nohttps']; ?>');
+				alert('HTTPS 프로토콜로 접속하시지 않은 경우 업로드할 수 없습니다.');
 				return;
 			} else if (file === null) {
-				alert('<?php echo $str['err_nofile']; ?>');
+				alert('업로드할 파일을 선택해주세요.');
 				return;
 			} else if (password === '') {
-				alert('<?php echo $str['err_nopw']; ?>');
+				alert('다운로드용 비밀번호를 입력해주세요.');
 				return;
 			} else if (password_delete === '') {
-				alert('<?php echo $str['err_nopw_delete']; ?>');
+				alert('삭제용 비밀번호를 입력해주세요.');
 				return;
 			} else if ($("#datepicker").val() === '') {
-				alert('<?php echo $str['err_nodate']; ?>');
+				alert('유효기간을 설정해주세요.');
 				return;
 			} else if (Math.floor(Date.now() / 86400000) > Math.floor(Date.parse($("#datepicker").val()) / 86400000)) {
-				alert('<?php echo $str['err_date']; ?>');
+				alert('유효기간은 현재 날짜와 같거나 늦어야 합니다.');
 				return;
 			} else if (password !== $("#password_re").val()) {
-				alert('<?php echo $str['err_pwmatch']; ?>');
+				alert('다운로드용 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
 				return;
 			} else if (password_delete !== $("#password_re_delete").val()) {
-				alert('<?php echo $str['err_pwmatch_delete']; ?>');
+				alert('삭제용 비밀번호와 비밀번호 확인이 일치하지 않습니다.');
 				return;
 			}
 
@@ -179,7 +175,7 @@
 			data.append('expires', $('#datepicker').val());
 			data.append('showfilename', $('#chk1').is(':checked')?'true':'false');
 			data.append('enablelist', $('#chk2').is(':checked')?'true':'false');
-			
+						
 			xhr.upload.onprogress = function(e) {
 				var done = e.position || e.loaded, total = e.totalSize || e.total;
 				$('#prog').html('<div class="progress progress-striped active" style="margin-bottom: 2px; margin-top: 15px"><div id="prog_height" class="progress-bar progress-bar-success" style="width: ' + Math.floor(done/total*100) + '%"></div></div>')
@@ -219,45 +215,67 @@
 					path:'ZeroClipboard.swf',
 					copy:password_created,
 					afterCopy:function(){
-						alert('<?php echo $str['copied']; ?>');
+						alert('비밀번호가 클립보드에 복사되었습니다.');
 					}
+				});
+			} else if (navigator.userAgent.indexOf("YOTTA") > -1) {
+				$('#copy' + what).click(function() {
+					window.yotta.copy(password_created);
 				});
 			} else {
 				$('#copy' + what).click(function() {
-					alert('<?php echo $str['cannotcopy']; ?>');
+					alert('이 브라우저에서는 자동 복사가 불가능합니다.');
 				});
 			}
 		};
 	</script>
 </head>
 <body>
-	<!--[if lte IE 8]><script>alert('<?php echo $str['err_noie']; ?>');</script><![endif]-->
-	<?php
-	$mode = 'upload';
-	require_once('menu.php');
-	?>
+	<!--[if lte IE 8]><script>alert('IE 8 이하는 지원하지 않습니다.');</script><![endif]-->
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="index.htm" hreflang="ko">YOTTA</a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="index.htm" hreflang="ko">새 파일</a></li>
+					<li><a href="list.htm" hreflang="ko">파일 목록</a></li>
+					<li><a href="about.htm" hreflang="ko">소개</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="./lang" hreflang="en">English</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
 	<div class="container main">
 		<div id="form" class="panel content">
 			<input type="file" class="file" id="fileinput" onchange="selectFile(event)">
 			<div class="row">
-				<div class="col-sm-12"><button id="btn_select" type="button" class="btn btn-success btn-block" onclick="$('#fileinput').click()"><?php echo $str['selectfile']; ?></button></div>
+				<div class="col-sm-12"><button id="btn_select" type="button" class="btn btn-success btn-block" onclick="$('#fileinput').click()">파일 선택</button></div>
 			</div>
 			<div class="spacer4"></div>
 			<div class="row">
-				<div class="col-sm-4"><input class="form-control" type="password" id="password" placeholder="<?php echo $str['password']; ?>"></div>
+				<div class="col-sm-4"><input class="form-control" type="password" id="password" placeholder="다운로드용 비밀번호"></div>
 				<div class="spacer3"></div>
-				<div class="col-sm-4"><input class="form-control" type="password" id="password_re" placeholder="<?php echo $str['password_re']; ?>"></div>
+				<div class="col-sm-4"><input class="form-control" type="password" id="password_re" placeholder="다운로드용 비밀번호 확인"></div>
 				<div class="spacer3"></div>
 				<div class="col-sm-4">
-					<button type="button" class="btn btn-block btn-info createpass" onclick="createPass(0)"><?php echo $str['createpw']; ?></button>
+					<button type="button" class="btn btn-block btn-info createpass" onclick="createPass(0)">무작위 비밀번호 생성</button>
 					<div id="popover0" class="popover bottom">
 						<div class="arrow"></div>
-						<h3 class="popover-title"><?php echo $str['created_password']; ?></h3>
+						<h3 class="popover-title">비밀번호 생성됨</h3>
 						<div class="popover-content">
-							<p id="pw_show0"></p>
+							<p id="pw_show0">
 							<div class="row">
-								<button id="copy0" type="button" class="btn btn-default btn-popover"><?php echo $str['copy']; ?></button>
-								<button type="button" class="btn btn-popover" onclick="$('#popover0').css('display', 'none');"><?php echo $str['close']; ?></button>
+								<button id="copy0" type="button" class="btn btn-default btn-popover">복사</button>
+								<button type="button" class="btn btn-popover" onclick="$('#popover0').css('display', 'none');">닫기</button>
 							</div>
 						</div>
 					</div>
@@ -265,20 +283,20 @@
 			</div>
 			<div class="spacer4"></div>
 			<div class="row">
-				<div class="col-sm-4"><input class="form-control" type="password" id="password_delete" placeholder="<?php echo $str['password_delete']; ?>"></div>
+				<div class="col-sm-4"><input class="form-control" type="password" id="password_delete" placeholder="삭제용 비밀번호"></div>
 				<div class="spacer3"></div>
-				<div class="col-sm-4"><input class="form-control" type="password" id="password_re_delete" placeholder="<?php echo $str['password_delete_re']; ?>"></div>
+				<div class="col-sm-4"><input class="form-control" type="password" id="password_re_delete" placeholder="삭제용 비밀번호 확인"></div>
 				<div class="spacer3"></div>
 				<div class="col-sm-4">
-					<button type="button" class="btn btn-block btn-info createpass" onclick="createPass(1)"><?php echo $str['createpw']; ?></button>
+					<button type="button" class="btn btn-block btn-info createpass" onclick="createPass(1)">무작위 비밀번호 생성</button>
 					<div id="popover1" class="popover bottom">
 						<div class="arrow"></div>
-						<h3 class="popover-title"><?php echo $str['created_password']; ?></h3>
+						<h3 class="popover-title">비밀번호 생성됨</h3>
 						<div class="popover-content">
-							<p id="pw_show1"></p>
+							<p id="pw_show1">
 							<div class="row">
-								<button id="copy1" type="button" class="btn btn-default btn-popover"><?php echo $str['copy']; ?></button>
-								<button type="button" class="btn btn-popover" onclick="$('#popover1').css('display', 'none');"><?php echo $str['close']; ?></button>
+								<button id="copy1" type="button" class="btn btn-default btn-popover">복사</button>
+								<button type="button" class="btn btn-popover" onclick="$('#popover1').css('display', 'none');">닫기</button>
 							</div>
 						</div>
 					</div>
@@ -288,27 +306,35 @@
 				<div class="col-sm-6">
 					<div class="spacer1"></div>
 					<div class="container-checkbox">
-						<label class="toggle"><input id="chk1" type="checkbox"><span class="handle"></span></label>&emsp;<label><?php echo $str['showfilename']; ?></label>
+						<label class="toggle"><input id="chk1" type="checkbox"><span class="handle"></span></label>&emsp;<label>다운로드 페이지에서 파일명 볼 수 있게 하기</label>
 					</div>
 					<div class="container-checkbox">
-						<label class="toggle"><input id="chk2" type="checkbox"><span class="handle"></span></label>&emsp;<label><?php echo $str['enablelist']; ?></label>
+						<label class="toggle"><input id="chk2" type="checkbox"><span class="handle"></span></label>&emsp;<label><a href="list.htm">전체 파일 목록</a>에 파일 보이기</label>
 					</div>
 					<div class="spacer2"></div>
 				</div>
 				<div class="col-sm-6">
-					<div class="col-sm-5"><label class="label-expires"><?php echo $str['expires']; ?></label></div>
+					<div class="col-sm-5"><label class="label-expires">파일 유효기간</label></div>
 					<div class="col-sm-7 datepicker">
 						<div class="container-checkbox">
 							<input class="form-control" type="text" id="datepicker">
 						</div>
 					</div>
-					<label class="label-expires-desc"><small><?php echo $str['expires-desc']; ?></small></label>
+					<label class="label-expires-desc"><small>유효기간에 도달한 파일은 자동으로 삭제됩니다.<br>유효기간이 경과하지 않았더라도 60일 이상 접근이 없는 파일은 삭제됩니다.</small></label>
 				</div>
 			</div>
 			<div id="prog"></div>
-			<button id="upload" type="button" class="btn btn-primary btn-block btn-upload" onclick="upload()"><?php echo $str['upload']; ?></button>
+			<button id="upload" type="button" class="btn btn-primary btn-block btn-upload" onclick="upload()">업로드</button>
 		</div>
 	</div>
-	<?php require_once('footer.php'); ?>
+	<script>
+$(document).ready(function() {
+	$('[data-toggle="tooltip"]').tooltip();
+});
+</script>
+<footer class="footer">
+	<div class="container">© 2014-2015 <strong>YOTTA</strong>, 완전히 암호화된 파일 공유 서비스. 업로드된 파일에 대한 모든 권리는 업로드한 사용자에게 있습니다.<br><a href="#" data-toggle="tooltip" data-placement="top" title="윤지용(GSHS 31st, 기획/개발) 박현민(GSHS 31st, 기획/서류처리(?))">만든 사람</a> | <a href="licenses.txt">오픈소스 라이센스 정보</a> | Powered by <a href="http://hhvm.com/">HHVM</a> on <a href="http://nginx.org/">nginx</a> w/ <a href="http://www.centos.org/">CentOS</a>. DB powered by <a href="https://mariadb.org/">MariaDB</a> | <a href="https://github.com/hletrd/YOTTA">Open Source</a>
+	</div>
+</footer>
 </body>
 </html>
