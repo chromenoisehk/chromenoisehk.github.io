@@ -1,0 +1,193 @@
+﻿<!doctype html>
+<html>
+<head>
+	<title>Berryz Webshare</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="icon" type="image/x-icon" id="page_favicon" href="/$skin/images/favicon.ico?action=SkinFile" />
+<link rel="stylesheet" type="text/css" href="/$skin/css/style.css?action=SkinFile" />
+<link rel="stylesheet" type="text/css" href="/$skin/css/tipped/tipped.css?action=SkinFile"/>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/$skin/js/common.js?action=SkinFile"></script>
+<script type="text/javascript" src="/$skin/js/sortabletable.js?action=SkinFile"></script>
+<script type="text/javascript" src="/$skin/js/tipped/tipped.js?action=SkinFile"></script>
+<script type="text/javascript">
+$(function(){
+	$("ul.panel li:not("+$("ul.tab li a.selected").attr("href")+")").hide();
+	$("ul.tab li a").click(function(){
+		$("ul.tab li a").removeClass("selected");
+		$(this).addClass("selected");
+		$("ul.panel li").hide();
+		$($(this).attr("href")).show();
+		return false;
+	});
+});
+</script>
+</head>
+
+<body>
+
+<div id="wrap">
+	<div id="header">
+		<h1><a href="/">WebShare</a></h1>
+		<span><a href="/">만화 뷰어 지원, FTP스트리밍 지원</a></span>
+	</div> <!-- header close -->
+
+	<div id="container">
+		<div class="top">
+			<div class="left">
+				#if( $display_upper )
+				<li><a href="..">상위폴더</a></li>
+				#else
+				#end
+			</div>
+			<div class="right">
+				#if( $current_login_id )
+				<li><a href=".?action=Logout">$current_login_id</a></li>
+				#else
+				<li><a href=".?action=Login">로그인</a></li>
+				#end
+			</div>
+		</div>
+
+		<div class="middle">
+			<ul class="tab">
+				<li><a href="#tab1" class="selected">Download</a></li>
+				<li><a href="#tab2">Chatting</a></li>
+			</ul>
+			<ul class="panel">
+				<li id="tab1">
+
+					#if( $content )
+					<div class="back">
+						$content
+						#if( $content_hide_back_button )
+						#else
+						<a href='/'>#U("<br/><br/>[처음으로]")</a>
+						#end
+					</div>
+					#end
+
+					#if( $show_files )
+					<form id="pluginForm" method="POST" action=""><input type="HIDDEN" name="selectedFiles" value=""></form>
+					<form id="fileListForm" style="margin:0; padding:0;">
+					<input type="hidden" name="checkboxes" style="margin:0;"/>
+					<table class="sortable" cellspacing="0">
+						<thead>
+						<tr>
+							<th class="checkbox"><input type="CHECKBOX" name="selectAllCheckbox" onClick="ToggleSelectAll();" /></th>
+							<th>
+								<span class="plugin"><a href="#" onclick="OnPlugin('ZIPdownload');"><b>Z</b>IP</a></span>
+								<span class="line">l</span>
+								<span class="plugin"><a href="#" onclick="OnPlugin('RARdownload');"><b>R</b>AR</a></span>
+								<span class="line">l</span>
+								<span class="plugin"><a href="#" onclick="OnPlugin('playlist.asx');"><b>A</b>SX</a></span>
+								<span class="line">l</span>
+								<span class="plugin"><a href="#" onclick="OnPlugin('album');"><b>A</b>LBUM</a></span>
+							</th>
+						</tr>
+						</thead>
+
+						<tbody>
+						#foreach( $files )
+						<tr class="fileentry" id="tr#$link">
+							<td class="checkbox"><input type='checkbox' name="checkbox#$link" value="$link" onClick='HighlightRow("$link", this.checked)'/></td>
+							#if ( $is_folder )
+							<td class="filelist">
+								<a href="$link"><span class="folder">$name</span></a> 
+								<div style="float: right;"><a href="$link" onclick="copy_trackback(this.href); return false;"><img src="/$skin/images/folder_link.png?action=SkinFile" width="16" height="16" alt="url" align="absmiddle" /></a></div>
+							</td>
+							#else
+							<td class="filelist">
+								<a href="$link">$name</a><span class="size"> / <span id="cvtsize[]">$size</span></span><a href="$link" onclick="copy_trackback(this.href); return false;">
+								<div style="float: right;"><img src="/$skin/images/page_white_link.png?action=SkinFile" width="16" height="16" alt="url" align="absmiddle" /></a></div>
+							</td>
+							#end
+						</tr>
+							#end
+
+						#if( $files )
+						#else
+						<tr><td colspan="2" class="blank">#U("폴더가 비었습니다.")</td></tr>
+						#end
+						<tr>
+							<td colspan="2" class="bottom">
+								#if( $upload_path )
+								<span class="plugin" onClick="window.open('/$skin/upload_frame.html?action=SkinFile#$upload_path*$skin','_blank','width=400,height=200,toolbar=no,status=no,resizable=no');"><a href='#upload'><b>U</b>pload</a></span>
+								<span class="line">l</span>
+								<span class="plugin" onClick="onMkdir()"><a href='#mkdir'><b>N</b>ew Folder</a></span>
+								<span class="line">l</span>
+								#end
+								<span class="plugin2"><a href="#" onclick="OnPlugin('Delete');"><b>D</b>elete</a></span>
+								<span class="line">l</span>
+								<span class="plugin2"><a href="#" onclick="OnPlugin('Rename');"><b>R</b>ename</a></span>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+					</form>
+					#end
+
+				</li> <!-- tab1 close -->
+				<li id="tab2">
+					채팅방 소스를 입력하세요.
+				</li> <!-- tab2 close -->
+			</ul> <!-- panel close -->
+		</div> <!-- middle close -->
+
+		<div class="bottom">
+			넣고싶은 소스를 넣으세요
+		</div>
+	</div> <!-- container close -->
+
+	<div id="footer">
+		<address>Powered by <a href="http://berryz.upnl.org/webshare" target="_blank" class="tooltip-top" title="v$version (rev.$revision)">Berryz Webshare</a>. / Skin by <a href="http://wallel.com" target="_blank">wallel</a>.</address>
+	</div> <!-- footer close -->
+</div>
+
+#if( $upload_path )
+<div style="visibility:hidden">
+<form method="GET" action="." name="MkdirForm">
+	<input type="hidden" name="action" value="MakeDirectory">
+	<input type="hidden" name="name">
+</form>
+</div>
+#end
+
+
+<script type="text/javascript">
+//용량 단위 변환 JS - http://blog.naver.com/ddworld/30137189886
+function byteConvertor(bytes) {
+	bytes = parseInt(bytes.replace(/,/gi, ''));
+	if (bytes > 0) {
+		var s = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+		var e = Math.floor(Math.log(bytes)/Math.log(1024));
+
+		if(e >= s.length) e = s.length - 1;//s의 마지막 단위로 표시할 수 없이 크다면, 마지막 단위로 처리
+
+		else if(e == "-Infinity") return "0 " + s[0];
+		else return (bytes/Math.pow(1024, Math.floor(e))).toFixed(2)+" "+s[e];
+	}
+	else {
+		return "0 bytes";
+	}
+}
+
+function onloadConvertor() {
+	var conobj = document.all['cvtsize[]'];
+	if (conobj.length > 1) {
+		for (var i=0; i<conobj.length; i++) {
+			conobj[i].innerHTML = byteConvertor(conobj[i].innerHTML);
+		}
+	}
+	else conobj.innerHTML = byteConvertor(conobj.innerHTML);
+}
+
+onloadConvertor();
+</script>
+</body>
+</html>
