@@ -1,22 +1,87 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html>
-	<head>
-		<title>Berryz WebShare Upload Form</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"/>
-	</head>
+<head>
+	<title>Berryz WebShare Upload Form</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=0" />
 
-	<body bgcolor="#FFFFFF" style='margin:0'>
-		<div style='margin:0px; font-family:Gulim; font-size:10pt;'>
-			<form method="post" name="uploadForm" enctype="multipart/form-data">
-				<input type="file" name="uploadfile" size="60" class="text"/>
-				<input type="submit" value="Upload" class="button" onClick='return onUpload();' />
-			</form>
-		</div>
+<style type="text/css">
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
 
-		<script language="JavaScript" type="text/javascript">
-///////////////////////////
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	font-family: 'Nanum Gothic', serif;
+	line-height: 100%;
+	font-size: 12px;
+}
+
+body {
+	background: #f1f1f1;
+}
+
+a {
+	color: #000;
+	text-decoration: none;
+}
+a:hover {
+	color: #888;
+	text-decoration: none;
+}
+
+img {
+	border: none;
+}
+
+div,
+span {
+	box-sizing: border-box;
+}
+
+a,
+table tbody tr {
+-webkit-transition: all .5s ease, margin .5s ease;
+   -moz-transition: all .5s ease, margin .5s ease;
+    -ms-transition: all .5s ease, margin .5s ease;
+     -o-transition: all .5s ease, margin .5s ease;
+        transition: all .5s ease, margin .5s ease;
+}
+
+#wrap {
+	width: 100%;
+	height: 100%;
+}
+form {
+	margin: 0;
+	padding: 0;
+}
+input {
+	font-family: 'Nanum Gothic';
+	font-size: 12px;
+	padding: 3px;
+}
+input.text {
+	width: 70%;
+	float: left;
+}
+input.button {
+	width: 20%;
+	float: right;
+}
+</style>
+</head>
+
+<body>
+<div id="wrap">
+<form method="post" name="uploadForm" enctype="multipart/form-data">
+	<input type="file" name="uploadfile" class="text"/>
+	<input type="submit" value="Upload" class="button" onClick='return onUpload();' />
+</form>
+</div>
+
+<script language="JavaScript" type="text/javascript">
 // http://kldp.net/snippet/detail.php?type=snippet&id=43
 String.prototype.trim = function()
 {
@@ -51,8 +116,7 @@ function onUpload()
 		return true;
 	}
 }
+</script>
 
-		</script>
-
-	</body>
+</body>
 </html>

@@ -71,12 +71,12 @@ function SortableTable(oTable, oSortTypes) {
 	this._headerOnclick = function (e) {
 		oThis.headerOnclick(e);
 	};
-	this._headerOnmousedown = function (e) {
-		oThis.headerOnmousedown(e);
-	};
-	this._headerOnmouseup = function (e) {
-		oThis.headerOnmouseup(e);
-	};
+	// this._headerOnmousedown = function (e) {
+	// 	oThis.headerOnmousedown(e);
+	// };
+	// this._headerOnmouseup = function (e) {
+	// 	oThis.headerOnmouseup(e);
+	// };
 
 	if (oTable) {
 		this.setTable( oTable );
@@ -231,25 +231,25 @@ SortableTable.prototype.updateHeaderArrows = function () {
 	}
 };
 
-SortableTable.prototype.headerOnmousedown = function (e) {
-	// find TD element
-	var el = e.target || e.srcElement;
-	while (el.tagName != "TH")
-		el = el.parentNode;
+// SortableTable.prototype.headerOnmousedown = function (e) {
+// 	// find TD element
+// 	var el = e.target || e.srcElement;
+// 	while (el.tagName != "TH")
+// 		el = el.parentNode;
 
-	this.oldClassName = el.className;
-	el.className = "pushed";
-};
+// 	this.oldClassName = el.className;
+// 	el.className = "pushed";
+// };
 
-SortableTable.prototype.headerOnmouseup = function (e) {
-	// find TD element
-	var el = e.target || e.srcElement;
-	while (el.tagName != "TH")
-		el = el.parentNode;
+// SortableTable.prototype.headerOnmouseup = function (e) {
+// 	// find TD element
+// 	var el = e.target || e.srcElement;
+// 	while (el.tagName != "TH")
+// 		el = el.parentNode;
 	
-	el.className = this.oldClassName;
-	this.oldClassName = null;
-};
+// 	el.className = this.oldClassName;
+// 	this.oldClassName = null;
+// };
 
 SortableTable.prototype.headerOnclick = function (e) {
 	// find TD element
@@ -526,10 +526,6 @@ SortableTable.toDateTime = function (s) {
 };
 
 SortableTable.toNumber = function (s) {
-	// s==''이면 parseInt의 결과가 NaN이 된다.
-	// 그런 게 들어있는 경우 소트 결과가 바보 되기 때문에,
-	// NaN을 검출하여 -1로 대치해 준다.
-
 	var value = parseInt(s.replace(/,/g, ''));
 
 	if( value*0 == 0 ) // normal number

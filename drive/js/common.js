@@ -1,5 +1,5 @@
 // BASIC
-var highlightColor = "#f1f1f1";
+var highlightColor = "#f9f9f9";
 var shiftPressed = false;
 
 function mouseDown( e )
@@ -72,7 +72,7 @@ function OnPlugin( sel )
 		return;
 	}
 	
-	if( sel == "RARdownload" || sel == "ZIPdownload" || sel == "playlist.asx" || sel == "Delete" ) {
+	if( sel == "RARdownload" || sel == "ZIPdownload" || sel == "playlist.asx" || sel == "Delete" || sel == "album" ) {
 		if(selectedCount < 1) {
 			alert("파일을 선택하세요. ("+selectedCount+")");
 			return false;
@@ -256,23 +256,11 @@ function SUBDIR_generate_point(path, lev, name)
 {
 	cache[path] = false;
 	level[path] = lev;
-	var div = document.createElement('div');
-	div.id = "d" + path;
-	div.style.position = 'absolute';
-	div.style.visibility = 'hidden';
-	div.style.border = '1px solid #808080';
-	div.style.padding="0.5em 0.5em 0.5em 0.5em";
-	div.style.backgroundColor = '#FFFFFF';
-	div.onmouseover = function(){SUBDIR_reset_close_timer()};
-	div.onmouseout = function(){if (div.style.visibility == "visible") SUBDIR_close_all();}
-	document.body.appendChild(div);
-	t = document.createTextNode('(정보를 가져오는 중입니다)');
-	div.appendChild(t);
 
 	if (lev == 1)
-		return "<span id=\"a"+path+"\" class='subdirTop' onmouseover='SUBDIR_open(this.id.substr(1));SUBDIR_reset_close_timer(); colorme(this);' onmouseout = 'SUBDIR_close_all();uncolorme(this);'><a href="+'"'+path+'"'+" >"+name+"</A></span>";
+		return "<a href="+'"'+path+'"'+" >"+name+"</a>";
 	else
-		return "<div id=\"a"+path+"\" class='subdirNode' style='width:inherit' onmouseover='SUBDIR_open(this.id.substr(1)); colorme(this);' onmouseout='uncolorme(this)'><a href="+'"'+path+'"'+" >"+name+"</a></div>";
+		return "<a href="+'"'+path+'"'+" >"+name+"</a>";
 }
 
 function write_split_address( addr )
@@ -284,41 +272,41 @@ function write_split_address( addr )
 		var arr = addr.split('/');
 		for(var i = arr.length - 2; i > 0 ; i --)
 		{
-			output = 
-				SUBDIR_generate_point(path ,1,arr[i]+"/") +  
-				output;
+			output = SUBDIR_generate_point(path ,1,arr[i]) + output;
 			path += "/..";
 		}
 	}
-	output = "주소: " + SUBDIR_generate_point(path, 1, "(최상위)/") + output
-	//output = "<span style='font-size: 200%'>주소: </span>" + output + SUBDIR_generate_point(".", 1, "(하위폴더보기)");
-	document.getElementById('titleContainer').innerHTML += output;
+	output = "<b>현재위치</b> <a href='/'>처음</a>" + output;
+	document.getElementById('location').innerHTML += output;
 }
 
-//tooltip style js
-$(document).ready(function() {
-	Tipped.create('.tooltip-top', { position: 'top' });
-});
-$(document).ready(function() {
-	Tipped.create('.tooltip-right', { position: 'right' });
-});
-$(document).ready(function() {
-	Tipped.create('.tooltip-bottom', { position: 'bottom' });
-});
-$(document).ready(function() {
-	Tipped.create('.tooltip-left', { position: 'left' });
-});
-
-//파일 주소 복사
-function copy_trackback(trb) {
+//file address copy
+function copy_address(url) {
 	var answer = confirm("파일 또는 폴더 주소를 복사하여 다른 사람과 공유하거나,\n동영상 스트리밍을 통해 파일을 다운받지 않고 실시간 감상이 가능합니다.\n\n주소를 확인 하시겠습니까?")
 	if (answer){
 		var IE=(document.all)?true:false;
 		if (IE) {
-		if(confirm("아래 주소를 복사하세요."))
-		window.clipboardData.setData("Text", trb);
+		if(confirm("다음 주소를 복사해 사용하세요."))
+		window.clipboardData.setData("Text", url);
 		} else {
-		temp = prompt("아래 주소를 복사하세요.", trb);
+		temp = prompt("다음 주소를 복사해 사용하세요.", url);
 		}
 	}
 }
+
+$(document).ready(function(){
+	if (folder_date == "0") {
+		$("#fileListTable .folder .date").contents().remove();
+	};
+	$( "#nav_button" ).click(function() {
+		$("#nav, #nav_back").toggle();
+		$( "html" ).addClass("open");
+	});
+	$("#nav_back").click(function() {
+		$("#nav, #nav_back").toggle();
+		$("html").removeClass("open")
+	})
+	$( "#pluginWrap #button" ).click(function() {
+		$("#pluginWrap #plugin").toggle();
+	});
+});
